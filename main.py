@@ -17,39 +17,43 @@ from train.train import train_model
 
 from train.evaulating import prediction_model
 
-monitorings = pd.read_csv('data/monitorings.csv')
+def main():
+    monitorings = pd.read_csv('data/monitorings.csv')
 
-# Очистим данные от пропусков, дубликатов и лишних столбцов
-monitorings = clean_data(monitorings)
+    # Очистим данные от пропусков, дубликатов и лишних столбцов
+    monitorings = clean_data(monitorings)
 
-# Добавим новые столбцы
-monitorings = add_features(monitorings)
-    
-# Проанализируем важность каждого признака
-model_for_feature, feature_names = feature_importances_analysis(monitorings)
+    # Добавим новые столбцы
+    monitorings = add_features(monitorings)
+        
+    # Проанализируем важность каждого признака
+    model_for_feature, feature_names = feature_importances_analysis(monitorings)
 
-# Получим значения влияния каждого признака
-score_data = importance_feature(model_for_feature, feature_names)
+    # Получим значения влияния каждого признака
+    score_data = importance_feature(model_for_feature, feature_names)
 
-# Удалим невлияющие признаки
-monitorings = processed_df(monitorings, score_data)
+    # Удалим невлияющие признаки
+    monitorings = processed_df(monitorings, score_data)
 
-# Получим актуальный список категориальных признаков
-category_features = actual_cat_features(monitorings)
-    
-# Подберём лучшие параметры для модели
-grid = {
-    'depth': [5,7],
-    'learning_rate' : [0.1, 0.01],
-    'iterations' : [400, 900]
-    }
-    
-# Получаем лучшие параметры для обучения модели
-params = grid_searching(monitorings, grid, category_features)
-    
-# Обучим модель
-model = train_model(monitorings, params, category_features)
-    
-# Посчитаем метрики
-metrics = prediction_model(model, monitorings)
-pd.DataFrame([metrics]).to_csv('train/metrics.csv', index=False)
+    # Получим актуальный список категориальных признаков
+    category_features = actual_cat_features(monitorings)
+        
+    # Подберём лучшие параметры для модели
+    grid = {
+        'depth': [5,7],
+        'learning_rate' : [0.1, 0.01],
+        'iterations' : [400, 900]
+        }
+        
+    # Получаем лучшие параметры для обучения модели
+    params = grid_searching(monitorings, grid, category_features)
+        
+    # Обучим модель
+    model = train_model(monitorings, params, category_features)
+        
+    # Посчитаем метрики
+    metrics = prediction_model(model, monitorings)
+    pd.DataFrame([metrics]).to_csv('train/metrics.csv', index=False)
+
+if __name__ == '__main__':
+    main()
