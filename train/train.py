@@ -28,7 +28,8 @@ def train_model(df, params, category_features):
     model = CatBoostClassifier(cat_features = category_features,
                               iterations = params['iterations'],
                               depth = params['depth'],
-                              learning_rate = params['learning_rate'])
+                              learning_rate = params['learning_rate'],
+                              random_seed=42)
     
     x_train, x_test, y_train, y_test = split_data(df)
     
